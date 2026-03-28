@@ -10,7 +10,7 @@ An AI-powered web application for summarizing Hebrew texts, built with Python an
 
 🛠️ Tech Stack
 - Backend: Python, FastAPI
-- AI: OpenRouter API (Gemini)
+- - AI: OpenRouter API (Google Gemini 2.0 Flash)
 - Frontend: HTML, CSS, Jinja2
 - Server: Uvicorn
 
@@ -35,7 +35,7 @@ pip install fastapi uvicorn openai python-dotenv jinja2 python-multipart
 
 4. Create a `.env` file with your API key:
 ```
-GEMINI_API_KEY=your_api_key_here
+OPENROUTER_API_KEY=your_api_key_here
 ```
 
 5. Run the server:
