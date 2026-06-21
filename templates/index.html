@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מסכם טקסט חכם</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a1a2e;
+            margin-bottom: 8px;
+            font-size: 2rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 32px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+            direction: rtl;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #4361ee;
+        }
+
+        .options {
+            display: flex;
+            gap: 12px;
+            margin: 16px 0;
+            justify-content: center;
+        }
+
+        .options label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            padding: 8px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .options input[type="radio"] {
+            display: none;
+        }
+
+        .options input[type="radio"]:checked+span {
+            color: #4361ee;
+            font-weight: bold;
+        }
+
+        .options label:has(input:checked) {
+            border-color: #4361ee;
+            background: #eef0ff;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #4361ee;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 8px;
+        }
+
+        button:hover {
+            background: #3451d1;
+        }
+
+        .result {
+            margin-top: 32px;
+            padding: 24px;
+            background: #f8f9ff;
+            border-radius: 10px;
+            border-right: 4px solid #4361ee;
+        }
+
+        .result h2 {
+            color: #4361ee;
+            margin-bottom: 12px;
+        }
+
+        .result p {
+            line-height: 1.8;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #666;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>📝 מסכם טקסט חכם</h1>
+        <p class="subtitle">הדבק טקסט בעברית וקבל סיכום מיידי</p>
+
+        <form method="post" action="/summarize" onsubmit="showLoading()">
+            <textarea name="text" placeholder="הדבק כאן את הטקסט שברצונך לסכם..."
+                required>{{ original_text or "" }}</textarea>
+
+            <div class="options">
+                <label>
+                    <input type="radio" name="length" value="short" {{ 'checked' if selected_length=='short' }}>
+                    <span>קצר</span>
+                </label>
+                <label>
+                    <input type="radio" name="length" value="medium" {{ 'checked' if selected_length=='medium' or not
+                        selected_length else '' }}>
+                    <span>בינוני</span>
+                </label>
+                <label>
+                    <input type="radio" name="length" value="detailed" {{ 'checked' if selected_length=='detailed' }}>
+                    <span>מפורט</span>
+                </label>
+            </div>
+
+            <button type="submit">סכם טקסט ✨</button>
+        </form>
+
+        <div class="loading" id="loading">⏳ מסכם את הטקסט, אנא המתן...</div>
+
+        {% if summary %}
+        <div class="result">
+            <h2>הסיכום:</h2>
+            <p>{{ summary }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+        }
+    </script>
+</body>
+
+</html>
