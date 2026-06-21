@@ -25,8 +25,9 @@ def summarize_text(text: str, length: str = "medium") -> str:
 
     try:
         response = client.chat.completions.create(
-            model="google/gemini-2.0-flash-001",
-            messages=[{"role": "user", "content": prompt}]
+            model="google/gemini-2.5-flash",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=2048
         )
         return response.choices[0].message.content
     except Exception as e:

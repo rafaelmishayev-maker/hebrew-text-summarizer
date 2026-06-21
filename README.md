@@ -13,7 +13,7 @@ Includes full RTL (right-to-left) support and three configurable summary lengths
 ## 🛠️ Tech Stack
 
 - **Backend:** Python, FastAPI, Uvicorn
-- **AI:** OpenRouter API (Google Gemini 2.0 Flash)
+- **AI:** OpenRouter API (Google Gemini 2.5 Flash)
 - **Frontend:** HTML, CSS, Jinja2
 
 ## 📂 Project Structure
