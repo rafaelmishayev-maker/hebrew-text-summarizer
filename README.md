@@ -16,6 +16,19 @@ Includes full RTL (right-to-left) support and three configurable summary lengths
 - **AI:** OpenRouter API (Google Gemini 2.5 Flash)
 - **Frontend:** HTML, CSS, Jinja2
 
+## 🧠 Design Decisions
+
+### Prompt language: English instructions, Hebrew output
+The model receives **instructions in English** while being explicitly required to
+**respond in Hebrew**. This was a deliberate choice:
+
+- **Model performance** — LLMs are trained predominantly on English data and tend
+  to follow complex instructions more reliably in English.
+- **Token efficiency** — Hebrew consumes more tokens per word than English due to
+  tokenization, so English instructions reduce cost and latency.
+- **Separation of concerns** — system instructions (English) are kept distinct from
+  the content and the user-facing output (Hebrew).
+
 ## 📂 Project Structure
 
 ```

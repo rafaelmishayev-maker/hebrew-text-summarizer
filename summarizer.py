@@ -11,16 +11,16 @@ client = OpenAI(
 
 def summarize_text(text: str, length: str = "medium") -> str:
     length_instructions = {
-        "short": "סכם ב-2-3 משפטים בלבד",
-        "medium": "סכם ב-5-7 משפטים",
-        "detailed": "סכם בפירוט ב-10-15 משפטים"
+        "short": "Summarize in 2-3 sentences only.",
+        "medium": "Summarize in 5-7 sentences.",
+        "detailed": "Summarize in detail, in 10-15 sentences."
     }
 
-    prompt = f"""אתה עוזר מקצועי לסיכום טקסטים בעברית.
-{length_instructions[length]}.
-חובה לענות בעברית בלבד.
+    prompt = f"""You are a professional assistant for summarizing Hebrew texts.
+{length_instructions[length]}
+You MUST respond in Hebrew only, in natural and fluent Hebrew.
 
-הטקסט לסיכום:
+Text to summarize:
 {text}"""
 
     try:
