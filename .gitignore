@@ -1,6 +1,13 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
 # Python
 __pycache__/
 *.py[cod]
+*.pyo
+*.pyd
 *.egg-info/
 .pytest_cache/
 
@@ -9,15 +16,10 @@ venv/
 .venv/
 env/
 
-# Environment variables / secrets
-.env
-.env.*
-!.env.example
-
-# IDE
-.idea/
+# IDEs
 .vscode/
+.idea/
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db

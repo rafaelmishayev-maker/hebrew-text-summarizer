@@ -1,74 +1,134 @@
-# 📝 Hebrew Text Summarizer
+# Hebrew Text Summarizer
 
 An AI-powered web application for summarizing Hebrew texts, built with Python and FastAPI.
-Includes full RTL (right-to-left) support and three configurable summary lengths.
 
-## ✨ Features
+The application provides full RTL support, three configurable summary lengths, asynchronous AI requests, input validation, and safe error handling.
 
-- AI-powered text summarization with full Hebrew support
-- Three summary lengths: short, medium, detailed
-- Clean and intuitive RTL user interface
-- Graceful handling of API rate limits
+## Features
 
-## 🛠️ Tech Stack
+- AI-powered Hebrew text summarization
+- Three summary lengths: short, medium, and detailed
+- Full RTL user interface
+- Asynchronous OpenRouter API calls
+- Input validation and maximum text length enforcement
+- Safe error handling without exposing internal exception details
+- Explicit rate-limit handling
+- Basic logging
+- Automated tests
+
+## Tech Stack
 
 - **Backend:** Python, FastAPI, Uvicorn
-- **AI:** OpenRouter API (Google Gemini 2.5 Flash)
+- **AI Provider:** OpenRouter
+- **Model:** Google Gemini 2.5 Flash
 - **Frontend:** HTML, CSS, Jinja2
+- **Testing:** Pytest, Pytest-Asyncio
 
-## 🧠 Design Decisions
+## Design Decisions
 
-### Prompt language: English instructions, Hebrew output
-The model receives **instructions in English** while being explicitly required to
-**respond in Hebrew**. This was a deliberate choice:
+### English instructions, Hebrew output
 
-- **Model performance** — LLMs are trained predominantly on English data and tend
-  to follow complex instructions more reliably in English.
-- **Token efficiency** — Hebrew consumes more tokens per word than English due to
-  tokenization, so English instructions reduce cost and latency.
-- **Separation of concerns** — system instructions (English) are kept distinct from
-  the content and the user-facing output (Hebrew).
+The model receives system instructions in English while being required to answer in Hebrew.
 
-## 📂 Project Structure
+This keeps system instructions separate from user content and provides a clear contract for the model.
 
-```
+### System and user messages are separated
+
+Application instructions are sent as a `system` message, while the source text is sent as user content.
+
+The source text is explicitly delimited and treated as data rather than instructions, which reduces prompt-injection risk.
+
+### Asynchronous API access
+
+FastAPI routes are asynchronous, so the OpenRouter request also uses `AsyncOpenAI`.
+
+This avoids blocking the event loop while waiting for the upstream AI provider.
+
+### Backend validation
+
+The backend validates:
+
+- Summary length using an enum
+- Empty input
+- Maximum input size
+
+The server does not rely on frontend controls for correctness.
+
+### Safe error handling
+
+Internal exception details are logged but are never returned directly to the user.
+
+Rate-limit failures are handled separately from general API failures.
+
+## Project Structure
+
+```text
 hebrew-text-summarizer/
-├── main.py            # FastAPI app and routes
-├── summarizer.py      # Summarization logic (OpenRouter API call)
+├── main.py
+├── summarizer.py
 ├── templates/
-│   └── index.html     # RTL web interface
-├── requirements.txt   # Python dependencies
-└── .env.example       # Example environment configuration
+│   └── index.html
+├── tests/
+│   └── test_summarizer.py
+├── requirements.txt
+├── pytest.ini
+├── .env.example
+└── README.md
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/rafaelmishayev-maker/hebrew-text-summarizer.git
-   cd hebrew-text-summarizer
-   ```
+
+```bash
+git clone https://github.com/rafael-mishayev/hebrew-text-summarizer.git
+cd hebrew-text-summarizer
+```
 
 2. Create and activate a virtual environment:
-   ```bash
-   python -m venv venv
-   venv\Scripts\activate      # Windows
-   source venv/bin/activate   # macOS / Linux
-   ```
+
+```bash
+python -m venv venv
+```
+
+Windows:
+
+```bash
+venv\Scripts\activate
+```
+
+macOS / Linux:
+
+```bash
+source venv/bin/activate
+```
 
 3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
 
-4. Create a `.env` file (copy from `.env.example`) and add your OpenRouter API key:
-   ```
-   OPENROUTER_API_KEY=your_api_key_here
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-5. Run the server:
-   ```bash
-   uvicorn main:app --reload
-   ```
+4. Copy `.env.example` to `.env` and add your OpenRouter API key:
 
-6. Open your browser at http://127.0.0.1:8000
+```env
+OPENROUTER_API_KEY=your_api_key_here
+```
+
+5. Run the application:
+
+```bash
+uvicorn main:app --reload
+```
+
+6. Open:
+
+```text
+http://127.0.0.1:8000
+```
+
+## Running Tests
+
+```bash
+pytest
+```
