@@ -1,9 +1,21 @@
 <!DOCTYPE html>
+<!--
+    Single template shared by both routes. It renders the empty form on GET
+    and the same form plus a result or error block on POST, so a submission
+    never navigates away from the page.
+
+    dir="rtl" and lang="he" are set on the document rather than on individual
+    elements so that punctuation, list markers and scrollbars all follow
+    Hebrew reading order by default.
+-->
 <html dir="rtl" lang="he">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hebrew Text Summarizer</title>
+    <!-- Styles are inlined: the app ships no static-file route, and the
+         sheet is small enough that a second request would cost more than
+         it saves. -->
     <style>
         * {
             box-sizing: border-box;
@@ -79,6 +91,9 @@
             border-radius: 8px;
         }
 
+        /* The native radio is hidden and its label is styled instead, which
+           allows a button-like control while keeping real radio semantics
+           for keyboard and screen-reader users. */
         .options input[type="radio"] {
             display: none;
         }
@@ -163,6 +178,9 @@
         <p class="subtitle">הדבק טקסט בעברית וקבל סיכום מיידי</p>
 
         <form method="post" action="/summarize" id="summary-form">
+            <!-- maxlength mirrors MAX_INPUT_CHARACTERS from the backend. It is a
+                 convenience only; summarize_text() re-checks the length, since
+                 the attribute is trivial to bypass. -->
             <textarea
                 id="text"
                 name="text"
@@ -175,6 +193,8 @@
                 <span id="character-count">0</span> / {{ max_input_characters }}
             </div>
 
+            <!-- The selected length is decided by the server and echoed back
+                 here, so a failed submission keeps the user's choice. -->
             <div class="options">
                 <label>
                     <input
@@ -214,6 +234,9 @@
             ⏳ מסכם את הטקסט, אנא המתן...
         </div>
 
+        {# Error and summary are mutually exclusive: the route sets exactly one #}
+        {# of them. The error is rendered first so it appears directly beneath #}
+        {# the button that produced it. #}
         {% if error %}
         <section class="message error" role="alert">
             <h2>שגיאה</h2>
@@ -230,12 +253,17 @@
     </main>
 
     <script>
+        // Progressive enhancement only. Without JavaScript the form still
+        // submits and the server still renders a result; the script adds the
+        // live counter and the in-flight feedback.
         const form = document.getElementById("summary-form");
         const textarea = document.getElementById("text");
         const loading = document.getElementById("loading");
         const submitButton = document.getElementById("submit-button");
         const characterCount = document.getElementById("character-count");
 
+        // Called once on load as well as on input, so a value restored by the
+        // server after a submission is counted immediately.
         function updateCharacterCount() {
             characterCount.textContent = textarea.value.length;
         }
@@ -243,6 +271,8 @@
         textarea.addEventListener("input", updateCharacterCount);
         updateCharacterCount();
 
+        // Summarization takes several seconds. Showing the spinner and locking
+        // the button prevents duplicate submissions of the same long text.
         form.addEventListener("submit", () => {
             loading.style.display = "block";
             submitButton.disabled = true;
